@@ -2,11 +2,11 @@ package locations
 
 //Country is
 type Country struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	TimeZone       string `json:"time_zone"`
-	GeoInformation GeoInformation
-	State          []State
+	ID             string         `json:"id"`
+	Name           string         `json:"name"`
+	TimeZone       string         `json:"time_zone"`
+	GeoInformation GeoInformation `json:"geo_information"`
+	States         []State        `json:"states"`
 }
 
 //GeoInformation is
