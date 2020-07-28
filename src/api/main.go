@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	country, err := providerlocation.GetCountry("AR")
+	country, err := providerlocation.GetCountry("ARs")
 	fmt.Println(err)
 	fmt.Println(country)
 }
