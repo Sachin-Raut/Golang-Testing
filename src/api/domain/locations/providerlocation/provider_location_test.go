@@ -45,3 +45,12 @@ func TestCountryInvalidErrorInterface(t *testing.T) {
 	assert.EqualValues(t, http.StatusInternalServerError, err.Status)
 	assert.EqualValues(t, "invalid error interface when getting country AR", err.Message)
 }
+
+func TestCountryInvalidJsonResponse(t *testing.T) {
+	country, err := GetCountry("AR")
+
+	assert.Nil(t, country)
+	assert.NotNil(t, err)
+	assert.EqualValues(t, http.StatusInternalServerError, err.Status)
+	assert.EqualValues(t, "error when trying to unmarshal country data for AR", err.Message)
+}
