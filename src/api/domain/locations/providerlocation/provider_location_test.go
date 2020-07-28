@@ -2,7 +2,10 @@ package providerlocation
 
 import (
 	"net/http"
+	"os"
 	"testing"
+
+	"github.com/mercadolibre/golang-restclient/rest"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -11,14 +14,19 @@ import (
 run all the tests after disconnecting & reconnecting the internet
 */
 
+func TestMain(m *testing.M) {
+	rest.StartMockupServer()
+	os.Exit(m.Run())
+}
+
 func TestGetCountryRestClientErrorNoInternet(t *testing.T) {
-	// rest.StartMockupServer()
-	// rest.FlushMockups()
-	// rest.AddMockups(&rest.Mock{
-	// 	URL:          "https://api.mercadolibre.com/countries/AR",
-	// 	HTTPMethod:   http.MethodGet,
-	// 	RespHTTPCode: 0,
-	// })
+
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.mercadolibre.com/countries/AR",
+		HTTPMethod:   http.MethodGet,
+		RespHTTPCode: 0,
+	})
 
 	country, err := GetCountry("AR")
 
@@ -29,6 +37,18 @@ func TestGetCountryRestClientErrorNoInternet(t *testing.T) {
 }
 
 func TestGetCountryNotFound(t *testing.T) {
+
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.mercadolibre.com/countries/AR",
+		HTTPMethod:   http.MethodGet,
+		RespHTTPCode: http.StatusNotFound,
+		RespBody: `{"message":"Country not found",
+		"error":"not_found",
+		"status":404,
+		"cause":[]}`,
+	})
+
 	country, err := GetCountry("AR")
 
 	assert.Nil(t, country)
@@ -38,6 +58,18 @@ func TestGetCountryNotFound(t *testing.T) {
 }
 
 func TestGetCountryInvalidErrorInterface(t *testing.T) {
+
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.mercadolibre.com/countries/AR",
+		HTTPMethod:   http.MethodGet,
+		RespHTTPCode: http.StatusNotFound,
+		RespBody: `{"message":"Country not found",
+		"error":"not_found",
+		"status":"404", //received status as "404", instead of int 404"
+		"cause":[]}`,
+	})
+
 	country, err := GetCountry("AR")
 
 	assert.Nil(t, country)
@@ -47,6 +79,15 @@ func TestGetCountryInvalidErrorInterface(t *testing.T) {
 }
 
 func TestGetCountryInvalidJsonResponse(t *testing.T) {
+
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.mercadolibre.com/countries/AR",
+		HTTPMethod:   http.MethodGet,
+		RespHTTPCode: http.StatusOK,
+		RespBody:     `{"id":123, "name":"Argentina"}`, //received id is 123 instead of "AR"
+	})
+
 	country, err := GetCountry("AR")
 
 	assert.Nil(t, country)
@@ -56,6 +97,15 @@ func TestGetCountryInvalidJsonResponse(t *testing.T) {
 }
 
 func TestGetCountryNoError(t *testing.T) {
+
+	rest.FlushMockups()
+	rest.AddMockups(&rest.Mock{
+		URL:          "https://api.mercadolibre.com/countries/AR",
+		HTTPMethod:   http.MethodGet,
+		RespHTTPCode: http.StatusNotFound,
+		RespBody:     `{"id":"AR","name":"Argentina","locale":"es_AR","currency_id":"ARS","decimal_separator":",","thousands_separator":".","time_zone":"GMT-03:00","geo_information":{"location":{"latitude":-38.416096,"longitude":-63.616673}},"states":[{"id":"AR-B","name":"Buenos Aires"},{"id":"AR-C","name":"Capital Federal"},{"id":"AR-K","name":"Catamarca"},{"id":"AR-H","name":"Chaco"},{"id":"AR-U","name":"Chubut"},{"id":"AR-W","name":"Corrientes"},{"id":"AR-X","name":"Córdoba"},{"id":"AR-E","name":"Entre Ríos"},{"id":"AR-P","name":"Formosa"},{"id":"AR-Y","name":"Jujuy"},{"id":"AR-L","name":"La Pampa"},{"id":"AR-F","name":"La Rioja"},{"id":"AR-M","name":"Mendoza"},{"id":"AR-N","name":"Misiones"},{"id":"AR-Q","name":"Neuquén"},{"id":"AR-R","name":"Río Negro"},{"id":"AR-A","name":"Salta"},{"id":"AR-J","name":"San Juan"},{"id":"AR-D","name":"San Luis"},{"id":"AR-Z","name":"Santa Cruz"},{"id":"AR-S","name":"Santa Fe"},{"id":"AR-G","name":"Santiago del Estero"},{"id":"AR-V","name":"Tierra del Fuego"},{"id":"AR-T","name":"Tucumán"}]}`,
+	})
+
 	country, err := GetCountry("AR")
 
 	assert.Nil(t, err)
