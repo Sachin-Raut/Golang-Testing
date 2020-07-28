@@ -11,7 +11,9 @@ import (
 )
 
 /*
-run all the tests after disconnecting & reconnecting the internet
+Run all the tests 2 times
+1.after disconnecting internet
+2.then reconnecting the internet
 */
 
 func TestMain(m *testing.M) {
