@@ -37,7 +37,7 @@ func TestGetCountryNotFound(t *testing.T) {
 	assert.EqualValues(t, "Country not found", err.Message)
 }
 
-func TestCountryInvalidErrorInterface(t *testing.T) {
+func TestGetCountryInvalidErrorInterface(t *testing.T) {
 	country, err := GetCountry("AR")
 
 	assert.Nil(t, country)
@@ -46,11 +46,20 @@ func TestCountryInvalidErrorInterface(t *testing.T) {
 	assert.EqualValues(t, "invalid error interface when getting country AR", err.Message)
 }
 
-func TestCountryInvalidJsonResponse(t *testing.T) {
+func TestGetCountryInvalidJsonResponse(t *testing.T) {
 	country, err := GetCountry("AR")
 
 	assert.Nil(t, country)
 	assert.NotNil(t, err)
 	assert.EqualValues(t, http.StatusInternalServerError, err.Status)
 	assert.EqualValues(t, "error when trying to unmarshal country data for AR", err.Message)
+}
+
+func TestGetCountryNoError(t *testing.T) {
+	country, err := GetCountry("AR")
+
+	assert.Nil(t, err)
+	assert.NotNil(t, country)
+	assert.EqualValues(t, "AR", country.ID)
+	assert.EqualValues(t, "Argentina", country.Name)
 }
