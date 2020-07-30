@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/Sachin-Raut/Golang-Testing/src/api/domain/locations/providerlocation"
+	"github.com/Sachin-Raut/Golang-Testing/src/api/app"
 )
 
 func main() {
-	country, err := providerlocation.GetCountry("ARs")
-	fmt.Println(err)
-	fmt.Println(country)
+
+	app.StartApp()
+
+	// country, err := providerlocation.GetCountry("ARs")
+	// fmt.Println(err)
+	// fmt.Println(country)
 }
