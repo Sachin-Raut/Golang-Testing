@@ -6,7 +6,7 @@ func TestDiscountApplied(t *testing.T) {
 	calculator := NewDiscountCalculator(100, 20)
 	amount := calculator.Calclulate(150)
 	if amount != 130 {
-		t.Error("received-", amount)
+		t.Error("received amt-", amount)
 		t.Fail()
 	}
 }
